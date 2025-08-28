@@ -1,0 +1,40 @@
+// Primitive: There are 7 primitive datatypes
+
+// 7 type : String, Number, Boolean, null, undefined, Symbol, Bigint
+
+
+const score = 100
+const scoreValue = 100.3
+
+const isLoggedIn = false
+const outsideTemp = null
+let userEmail;
+
+const id = Symbol('123')
+const anotherId = Symbol('123')
+
+console.log(id === anotherId)
+
+
+const bigNumber = 345345345345345454n
+
+
+
+
+// Refrence (Non Primitive)
+
+// Array, Objects, Funcitons
+
+
+const heros = ["superman", "spiderman", "ironman"];
+let myObj = {
+    name: "saqib",
+    age: 22,
+
+}
+
+const myFunction = function () {
+    console.log("Hello world")
+}
+
+console.log(typeof anotherId)
