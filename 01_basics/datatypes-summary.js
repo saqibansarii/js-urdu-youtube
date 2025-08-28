@@ -13,7 +13,7 @@ let userEmail;
 const id = Symbol('123')
 const anotherId = Symbol('123')
 
-console.log(id === anotherId)
+// console.log(id === anotherId)
 
 
 const bigNumber = 345345345345345454n
@@ -34,7 +34,35 @@ let myObj = {
 }
 
 const myFunction = function () {
-    console.log("Hello world")
+    console.log("Hello world");
 }
 
-console.log(typeof anotherId)
+// console.log(typeof anotherId);
+
+
+//-------------------------- Memories ------------------
+
+// 2 types of memory
+// stack memory and heap memory
+//stack memory is used in (Primitive) dataype. When stack memory is used it give us copy
+// Heap memory is used in (non Primitive or refrence) datatype. When heap memory is used it give us refrence.
+
+let myYoutubename = "saqibansari.com"
+
+let anothername = myYoutubename
+anothername = "chaiaurcode"
+
+console.log(myYoutubename);
+console.log(anothername);
+
+let userOne = {
+    email: "user@google.com",
+    upi: "user@xyz"
+}
+
+let userTwo = userOne
+
+userTwo.email = "saqib@google.com"
+
+console.log(userOne.email)
+console.log(userTwo.email)
