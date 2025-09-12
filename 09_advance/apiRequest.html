@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Profile Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #212121;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 30px;
+            color: #ff7e5f;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 18px;
+            margin: 20px 0;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .card {
+            background: linear-gradient(135deg, #2c3e50, #4a5568);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .card.visible {
+            display: block;
+            opacity: 1;
+        }
+        
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid #ff7e5f;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .username {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #ff7e5f;
+        }
+        
+        .followers {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 20px;
+            margin-top: 20px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .count {
+            font-weight: bold;
+            color: #feb47b;
+            font-size: 28px;
+        }
+        
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+        
+        .loading.visible {
+            display: block;
+        }
+        
+        .spinner {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid #ff7e5f;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .states {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .states h2 {
+            margin-bottom: 15px;
+            color: #feb47b;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        th {
+            color: #ff7e5f;
+        }
+        
+        .ready-state {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GitHub Profile Viewer</h1>
+        
+        <button class="btn" id="fetchBtn">Fetch GitHub Profile</button>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Loading profile data...</p>
+        </div>
+        
+        <div class="card" id="profileCard">
+            <div class="avatar">
+                <img id="avatarImg" src="" alt="Profile Avatar">
+            </div>
+            <h2 class="username" id="username">Username</h2>
+            <div class="followers">
+                Followers: <span class="count" id="followerCount">0</span>
+            </div>
+        </div>
+        
+        <div class="states">
+            <h2>XMLHttpRequest ReadyStates</h2>
+            <table>
+                <tr>
+                    <th>Value</th>
+                    <th>State</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>0</td>
+                    <td>UNSENT</td>
+                    <td>Client has been created. open() not called yet.</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>OPENED</td>
+                    <td>open() has been called.</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>HEADERS_RECEIVED</td>
+                    <td>send() has been called, and headers and status are available.</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>LOADING</td>
+                    <td>Downloading; responseText holds partial data.</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>DONE</td>
+                    <td>The operation is complete.</td>
+                </tr>
+            </table>
+            <div class="ready-state" id="readyState">
+                Current readyState: <span id="stateValue">-</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const requestUrl = 'https://api.github.com/users/saqibansarii';
+            const fetchBtn = document.getElementById('fetchBtn');
+            const profileCard = document.getElementById('profileCard');
+            const loading = document.getElementById('loading');
+            const avatarImg = document.getElementById('avatarImg');
+            const username = document.getElementById('username');
+            const followerCount = document.getElementById('followerCount');
+            const stateValue = document.getElementById('stateValue');
+            
+            fetchBtn.addEventListener('click', function() {
+                // Reset UI
+                profileCard.classList.remove('visible');
+                loading.classList.add('visible');
+                stateValue.textContent = '0';
+                
+                const xhr = new XMLHttpRequest();
+                
+                xhr.open('GET', requestUrl);
+                
+                xhr.onreadystatechange = function() {
+                    stateValue.textContent = xhr.readyState;
+                    
+                    if (xhr.readyState === 4) {
+                        loading.classList.remove('visible');
+                        
+                        if (xhr.status === 200) {
+                            const data = JSON.parse(xhr.responseText);
+                            
+                            // Update the card with user data
+                            avatarImg.src = data.avatar_url;
+                            username.textContent = data.login || data.name;
+                            followerCount.textContent = data.followers;
+                            
+                            // Show the card
+                            profileCard.classList.add('visible');
+                        } else {
+                            alert('Failed to fetch user data. Please try again.');
+                        }
+                    }
+                };
+                
+                xhr.send();
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="background-color: #212121; color: white">
+    Value	State	Description
+0	UNSENT	Client has been created. open() not called yet.
+1	OPENED	open() has been called.
+2	HEADERS_RECEIVED	send() has been called, and headers and status are available.
+3	LOADING	Downloading; responseText holds partial data.
+4	DONE	The operation is complete.
+</body>
+<script>
+    const requestUrl = 'https://api.github.com/users/saqibansarii'
+    const xhr = new XMLHttpRequest()
+    xhr.open('GET', requestUrl)
+    xhr.onreadystatechange = function(){
+        console.log(xhr.readyState);
+        if(xhr.readyState === 4){
+            const data = JSON.parse(this.responseText)
+            console.log(typeof data)
+            console.log(data.followers)
+        }
+    }
+    xhr.send();
+</script>
+</html> -->
