@@ -10,6 +10,6 @@ const User = {
         this.eamil = value
     }
 }
-
+v
 const tea = Object.create(User)
 console.log(tea.email)
